@@ -62,9 +62,24 @@ function php2shell_verdict($version)
     $fixed = php2shell_fixed_versions();
     $eol   = php2shell_eol_branches();
 
-    // TODO(human): decide the verdict from $v['base'], $v['branch'],
-    // $v['extra'], $fixed and $eol. version_compare($a, $b, '>=') compares
-    // two "x.y.z" strings.
+    // A distro suffix means the fix may be backported without a version bump,
+    // so an old-looking distro build is "check the changelog", not "vulnerable".
+    $distro = $v['extra'] !== '' && $v['extra'] !== '-dev';
+
+    if (isset($fixed[$v['branch']])) {
+        if (version_compare($v['base'], $fixed[$v['branch']], '>=')) {
+            return 'PATCHED';
+        }
+        return $distro ? 'CHECK_VENDOR' : 'VULNERABLE';
+    }
+    // Branches newer than every fixed one (8.6, 9.x) were released after the fix.
+    if (version_compare($v['branch'], '8.5', '>')) {
+        return 'PATCHED';
+    }
+    if ($distro) {
+        return 'CHECK_VENDOR';
+    }
+    return in_array($v['branch'], $eol, true) ? 'EOL' : 'UNSUPPORTED';
 }
 
 /** "128M" -> 134217728. Returns -1 for "-1" (no limit). */
@@ -142,6 +157,11 @@ function php2shell_report()
         $out[] = 'DELETE THIS FILE NOW: ' . __FILE__;
     }
     return implode("\n", $out) . "\n";
+}
+
+// Tests define this to load the functions above without running the report.
+if (defined('PHP2SHELL_LIBRARY_ONLY')) {
+    return;
 }
 
 if (PHP_SAPI === 'cli') {

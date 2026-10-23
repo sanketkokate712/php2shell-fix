@@ -1,0 +1,42 @@
+name: checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  php:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['5.4', '5.6', '7.4', '8.1', '8.2', '8.3', '8.4', '8.5']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: none
+      - name: Lint check.php
+        run: php -l skills/php2shell-fix/scripts/check.php
+      - name: Unit tests
+        run: php tests/verdict_test.php
+      - name: CLI report
+        run: php skills/php2shell-fix/scripts/check.php
+
+  shell:
+    name: find-php.sh
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ShellCheck
+        run: shellcheck -S warning skills/php2shell-fix/scripts/find-php.sh
+      - name: Smoke run (exit 0 = all patched, 2 = action needed; both are fine here)
+        run: |
+          set +e
+          bash skills/php2shell-fix/scripts/find-php.sh
+          rc=$?
+          echo "exit code: $rc"
+          [ "$rc" -eq 0 ] || [ "$rc" -eq 2 ]

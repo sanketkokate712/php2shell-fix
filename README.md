@@ -1,5 +1,7 @@
 # php2shell-fix
 
+[![checks](https://github.com/sanketkokate712/php2shell-fix/actions/workflows/checks.yml/badge.svg)](https://github.com/sanketkokate712/php2shell-fix/actions/workflows/checks.yml)
+
 A Claude Code skill and scripts that find, patch and verify **PHP2Shell** (CVE-2026-109618 and CVE-2026-109619) on any PHP website or server.
 
 > PHP2Shell is two critical remote-code-execution flaws in the PHP engine, affecting **PHP 5.4 through 8.5.11** on every web setup (mod_php, PHP-FPM, CGI, LiteSpeed, FrankenPHP). It is being exploited in the wild. The fix is to upgrade to **8.5.12, 8.4.27, 8.3.36 or 8.2.35**.
