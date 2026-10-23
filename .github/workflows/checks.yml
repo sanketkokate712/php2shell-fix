@@ -13,7 +13,7 @@ jobs:
       matrix:
         php: ['5.4', '5.6', '7.4', '8.1', '8.2', '8.3', '8.4', '8.5']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
@@ -30,7 +30,7 @@ jobs:
     name: find-php.sh
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: ShellCheck
         run: shellcheck -S warning skills/php2shell-fix/scripts/find-php.sh
       - name: Smoke run (exit 0 = all patched, 2 = action needed; both are fine here)

@@ -67,7 +67,7 @@ The output includes the PHP version, SAPI, verdict and the current values of the
 | `UNSUPPORTED` | Older than 7.4 | No fix exists. Migrate to a supported PHP and apply mitigations meanwhile, or take the site offline |
 | `CHECK_VENDOR` | A distro build whose version number can't prove it either way | Look for the CVE IDs in the package changelog (`find-php.sh` does this). A match means patched; no match means vulnerable |
 
-RHEL, AlmaLinux and Rocky builds backport fixes **without** adding a suffix to the version, so their version-based verdict can say `VULNERABLE` or `EOL` even when the package is patched. On RPM systems, trust the changelog section of `find-php.sh` over the version verdict.
+Ubuntu 24.04+, RHEL, AlmaLinux and Rocky builds backport fixes **without** adding a suffix to the version (Ubuntu 24.04 reports a bare `8.3.6`). So `check.php` alone can say `VULNERABLE` or `EOL` for a patched package. `find-php.sh` checks the owning package's changelog and shows `PATCHED (backport)` in that case, so trust it over `check.php` for distro packages.
 
 ### 5. Upgrade
 

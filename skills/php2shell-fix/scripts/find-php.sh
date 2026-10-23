@@ -46,6 +46,21 @@ verdict_for() {
   fi
 }
 
+# Distros (Ubuntu 24.04+, RHEL) backport fixes without changing the version
+# PHP reports, so ask the package that owns the binary whether it lists the CVEs.
+backported() {
+  local pkg
+  if command -v dpkg >/dev/null 2>&1; then
+    pkg=$(dpkg -S "$1" 2>/dev/null | head -1 | cut -d: -f1)
+    [ -n "$pkg" ] && zgrep -qE "$CVES" "/usr/share/doc/$pkg/changelog.Debian.gz" 2>/dev/null && return 0
+  fi
+  if command -v rpm >/dev/null 2>&1; then
+    pkg=$(rpm -qf "$1" 2>/dev/null) || return 1
+    rpm -q --changelog "$pkg" 2>/dev/null | grep -qE "$CVES" && return 0
+  fi
+  return 1
+}
+
 # --- 2. version + verdict per binary ----------------------------------------
 head1 "PHP binaries"
 if [ -z "$candidates" ]; then
@@ -55,7 +70,8 @@ for p in $candidates; do
   ver=$("$p" -v 2>/dev/null | head -1 | awk '{print $2}')
   [ -z "$ver" ] && ver="?"
   v=$(verdict_for "$ver")
-  printf '%-14s %-28s %s\n' "$v" "$ver" "$p"
+  case "$v" in PATCHED*) ;; *) backported "$p" && v="PATCHED (backport)" ;; esac
+  printf '%-20s %-28s %s\n' "$v" "$ver" "$p"
   case "$v" in PATCHED*) ;; *) needs_action=1 ;; esac
 done
 
