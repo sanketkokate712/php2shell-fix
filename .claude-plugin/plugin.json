@@ -1,0 +1,10 @@
+{
+  "name": "php2shell-fix",
+  "description": "Find, patch and verify the PHP2Shell vulnerabilities (CVE-2026-109618, CVE-2026-109619) on any PHP website or server.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Sanket Kokate"
+  },
+  "license": "MIT",
+  "keywords": ["php", "security", "php2shell", "CVE-2026-109618", "CVE-2026-109619"]
+}

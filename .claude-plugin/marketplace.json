@@ -1,0 +1,13 @@
+{
+  "name": "php2shell-fix",
+  "owner": {
+    "name": "Sanket Kokate"
+  },
+  "plugins": [
+    {
+      "name": "php2shell-fix",
+      "source": "./",
+      "description": "Find, patch and verify the PHP2Shell vulnerabilities (CVE-2026-109618, CVE-2026-109619) on any PHP website or server."
+    }
+  ]
+}
